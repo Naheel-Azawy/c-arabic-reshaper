@@ -15,7 +15,9 @@ int is_ar(wchar_t c) {
     || (c == 0x06E4);
 }
 
+//#define GET_UNSHAPED_GLPHY_OLD
 wchar_t get_unshaped_glphy(wchar_t target) {
+#ifdef GET_UNSHAPED_GLPHY_OLD
   for (int i = 0; i < ARABIC_GLPHIES_LEN; ++i) {
     for (int j = 1; j < 5; ++j) {
       if (ARABIC_GLPHIES[i][j] == target) {
@@ -23,23 +25,36 @@ wchar_t get_unshaped_glphy(wchar_t target) {
       }
     }
   }
+#else
+  if (target >= ARABIC_GLPHIES_REV_1_MIN && target <= ARABIC_GLPHIES_REV_1_MAX) {
+    return ARABIC_GLPHIES_REV_1[target - ARABIC_GLPHIES_REV_1_MIN];
+  } else if (target >= ARABIC_GLPHIES_REV_2_MIN && target <= ARABIC_GLPHIES_REV_2_MAX) {
+    return ARABIC_GLPHIES_REV_2[target - ARABIC_GLPHIES_REV_2_MIN];
+  } else if (target >= ARABIC_GLPHIES_REV_0_MIN && target <= ARABIC_GLPHIES_REV_0_MAX) {
+    for (int i = 0; i < ARABIC_GLPHIES_REV_0_LEN; ++i) {
+      if (target == ARABIC_GLPHIES_REV_0[i][0]) {
+        return ARABIC_GLPHIES_REV_0[i][1];
+      }
+    }
+  }
+#endif
   return target;
 }
 
 wchar_t get_reshaped_glphy(wchar_t target, int location) {
-  if (target < 0x0622 || target > 0x06E4) {
+  if (target < ARABIC_GLPHIES_MIN || target > ARABIC_GLPHIES_MAX) {
     return target;
   } else {
-    int res = ARABIC_GLPHIES[target - 0x0622][location];
+    int res = ARABIC_GLPHIES[target - ARABIC_GLPHIES_MIN][location];
     return res == 0 ? target : res;
   }
 }
 
 int get_glphy_type(wchar_t target) {
-  if (target < 0x0622 || target > 0x06E4) {
+  if (target < ARABIC_GLPHIES_MIN || target > ARABIC_GLPHIES_MAX) {
     return 2;
   } else {
-    return ARABIC_GLPHIES[target - 0x0622][5];
+    return ARABIC_GLPHIES[target - ARABIC_GLPHIES_MIN][5];
   }
 }
 

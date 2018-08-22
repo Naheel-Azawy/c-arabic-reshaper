@@ -1,7 +1,8 @@
 #!/bin/bash
-cat test-data.txt | ./arabic-reshape > test-data-reshaped.txt
-cat test-data-reshaped.txt | env ARRESHOPT="u" ./arabic-reshape > test-data-unshaped.txt
-RES=$(diff test-data.txt test-data-unshaped.txt)
+T="test-data-1"
+cat "$T.txt" | ./arabic-reshape > "$T-reshaped.txt"
+cat "$T-reshaped.txt" | env ARRESHOPT="u" ./arabic-reshape > "$T-unshaped.txt"
+RES=$(diff "$T.txt" "$T-unshaped.txt")
 if [ "$RES" = "" ]; then
     echo "Passed test!!!"
 else
