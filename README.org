@@ -1,0 +1,15 @@
+* C Arabic Reshaper
+A simple Arabic reshaper written in C
+** Installation
+#+BEGIN_SRC sh
+$ make
+$ sudo make install
+#+END_SRC
+** Future improvements
+- No support for la (لا)
+- No support for harakat (tashkeel)
+** Similar projects
+- [[https://github.com/agawish/Better-Arabic-Reshaper][Better Arabic Reshaper (Java)]]
+- [[https://github.com/mpcabd/python-arabic-reshaper][python-arabic-reshaper]]
+** License
+GPL-3
