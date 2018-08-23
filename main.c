@@ -10,12 +10,14 @@ int main(int argc, char** argv) {
            L"Can't set the specified locale! Check LANG, LC_CTYPE, LC_ALL.\n");
 
   char* opt = getenv("ARRESHOPT");
-  bool rev = false;
-  bool uns = false;
+  bool rev = false; // reverse string
+  bool uns = false; // unshape
+  bool bth = false; // both, unshape and reshape
   if (opt) for (char* o = opt; *o; ++o) {
     switch (*o) {
     case 'r': rev = true; break;
     case 'u': uns = true; break;
+    case 'b': bth = true; break;
     }
   }
 
@@ -26,7 +28,7 @@ int main(int argc, char** argv) {
   while(fgets(buffer, sizeof(buffer), stdin) != 0) {
     str = new_str(buffer, &len);
     if (uns) unshape(str, len);
-    else reshape(str, len);
+    else reshape(str, len, bth);
     if (rev) reverse_str(str, len);
     wprintf(L"%S", str);
     if (str) free(str);

@@ -4,15 +4,29 @@
 #include <locale.h>
 #include <wchar.h>
 #include <string.h>
+#include <stdbool.h>
 #include "arabic-glyphies.h"
 #include "arabic-reshaper.h"
 
-int is_ar(wchar_t c) {
+bool is_ar(wchar_t c) {
   return (c >= 0x0622 && c <= 0x063A)
     || (c >= 0x0641 && c <= 0x064A)
     || (c == 0x066E) || (c == 0x0671)
     || (c == 0x06AA) || (c == 0x06C1)
     || (c == 0x06E4);
+}
+
+bool is_tashkeel(wchar_t c) {
+  return
+    (c >= 0x0610 && c <= 0x061A) ||
+    (c >= 0x064B && c <= 0x065F) ||
+    (c == 0x0670)                ||
+    (c >= 0x06D6 && c <= 0x06DC) ||
+    (c >= 0x06DF && c <= 0x06E8) ||
+    (c >= 0x06EA && c <= 0x06ED) ||
+    (c >= 0x08D4 && c <= 0x08E1) ||
+    (c >= 0x08D4 && c <= 0x08ED) ||
+    (c >= 0x08E3 && c <= 0x08FF);
 }
 
 //#define GET_UNSHAPED_GLPHY_OLD
@@ -50,6 +64,10 @@ wchar_t get_reshaped_glphy(wchar_t target, int location) {
   }
 }
 
+wchar_t get_reshaped_unshaped_glphy(wchar_t target, int location, bool unshape) {
+  return get_reshaped_glphy(unshape ? get_unshaped_glphy(target) : target, location);
+}
+
 int get_glphy_type(wchar_t target) {
   if (target < ARABIC_GLPHIES_MIN || target > ARABIC_GLPHIES_MAX) {
     return 2;
@@ -58,7 +76,7 @@ int get_glphy_type(wchar_t target) {
   }
 }
 
-wchar_t* reshape(wchar_t* str, size_t len) {
+wchar_t* reshape(wchar_t* str, size_t len, bool unshape) {
 
   // Double check
   if (str == 0 || *str == 0 || len == 0) {
@@ -69,7 +87,7 @@ wchar_t* reshape(wchar_t* str, size_t len) {
   wchar_t prev = str[0], tmp;
 
   // First char is always a starting char
-  str[0] = get_reshaped_glphy(str[0], 2);
+  str[0] = get_reshaped_unshaped_glphy(str[0], 2, unshape);
 
   // Iterate from the second till the second to last
   int i;
@@ -78,17 +96,17 @@ wchar_t* reshape(wchar_t* str, size_t len) {
     tmp = str[i];
     if(get_glphy_type(prev) == 2 || !is_ar(prev)) { // If prev has only 2 types OR it is not arabic (start of the word)
       if (!is_ar(str[i + 1])) { // If not arabic (end of the word)
-        str[i] = get_reshaped_glphy(str[i], 1);
+        str[i] = get_reshaped_unshaped_glphy(str[i], 1, unshape);
       } else {
         // If the letter has only 2 shapes, then it doesnt matter which position it is, It'll be always the second form
-        str[i] = get_reshaped_glphy(str[i], 2);
+        str[i] = get_reshaped_unshaped_glphy(str[i], 2, unshape);
       }
     } else if (!is_ar(str[i + 1])) { // If not arabic (end of the word)
       // Put the right form of the character, 4 for the last letter in the str
-      str[i] = get_reshaped_glphy(str[i], 4);
+      str[i] = get_reshaped_unshaped_glphy(str[i], 4, unshape);
     } else {
       // Then it should be in the middle which should be placed in its right form 3
-      str[i] = get_reshaped_glphy(str[i], 3);
+      str[i] = get_reshaped_unshaped_glphy(str[i], 3, unshape);
     }
     prev = tmp;
   }
@@ -97,10 +115,10 @@ wchar_t* reshape(wchar_t* str, size_t len) {
   if (len >= 2) {
     if(get_glphy_type(prev) == 2) {
       // If the letter has only 2 shapes, then it doesnt matter which position it is, It'll be always the second form
-      str[i] = get_reshaped_glphy(str[len - 1], 1);
+      str[i] = get_reshaped_unshaped_glphy(str[len - 1], 1, unshape);
     } else {
       // Put the right form of the character, 4 for the last letter in the str
-      str[i] = get_reshaped_glphy(str[len - 1], 4);
+      str[i] = get_reshaped_unshaped_glphy(str[len - 1], 4, unshape);
     }
   }
 

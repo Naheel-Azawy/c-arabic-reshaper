@@ -10,7 +10,7 @@ arabic-reshaper.o: arabic-reshaper.c arabic-reshaper.h arabic-glyphies.h
 	$(CC) -c arabic-reshaper.c
 
 clean:
-	rm *.o arabic-reshape
+	rm -f *.o arabic-reshape
 
 install: arabic-reshape
 	cp arabic-reshape /usr/bin/arabic-reshape

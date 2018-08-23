@@ -2,6 +2,7 @@
 #define __ARABIC_RESHAPER_H
 
 #include <wchar.h>
+#include <stdbool.h>
 
 #define RED   "\x1B[31m"
 #define GRN   "\x1B[32m"
@@ -18,15 +19,19 @@
 #define info(s, ...) { fwprintf(stdout, L"" BLU s RESET "\n", ##__VA_ARGS__); }
 #define infoif(c, s, ...) if (c) info(s, ##__VA_ARGS__);
 
-int is_ar(wchar_t c);
+bool is_ar(wchar_t c);
+
+bool is_tashkeel(wchar_t c);
 
 wchar_t get_unshaped_glphy(wchar_t target);
 
 wchar_t get_reshaped_glphy(wchar_t target, int location);
 
+wchar_t get_reshaped_unshaped_glphy(wchar_t target, int location, bool unshape);
+
 int get_glphy_type(wchar_t target);
 
-wchar_t* reshape(wchar_t* str, size_t len);
+wchar_t* reshape(wchar_t* str, size_t len, bool unshape);
 
 wchar_t* unshape(wchar_t* str, size_t len);
 
