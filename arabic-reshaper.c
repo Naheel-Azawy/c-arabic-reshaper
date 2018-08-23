@@ -64,10 +64,6 @@ wchar_t get_reshaped_glphy(wchar_t target, int location) {
   }
 }
 
-wchar_t get_reshaped_unshaped_glphy(wchar_t target, int location, bool unshape) {
-  return get_reshaped_glphy(unshape ? get_unshaped_glphy(target) : target, location);
-}
-
 int get_glphy_type(wchar_t target) {
   if (target < ARABIC_GLPHIES_MIN || target > ARABIC_GLPHIES_MAX) {
     return 2;
@@ -85,40 +81,50 @@ wchar_t* reshape(wchar_t* str, size_t len, bool unshape) {
 
   // Keep the previous char
   wchar_t prev = str[0], tmp;
+  if (unshape) {
+    prev = get_unshaped_glphy(prev);
+  }
 
   // First char is always a starting char
-  str[0] = get_reshaped_unshaped_glphy(str[0], 2, unshape);
+  str[0] = get_reshaped_glphy(str[0], 2);
 
   // Iterate from the second till the second to last
   int i;
   for (i = 1; i < len - 1; ++i) {
+    if (unshape) {
+      str[i] = get_unshaped_glphy(str[i]);
+      str[i + 1] = get_unshaped_glphy(str[i + 1]);
+    }
     // Store the current char as it will be needed in the next iteration as 'prev'
     tmp = str[i];
     if(get_glphy_type(prev) == 2 || !is_ar(prev)) { // If prev has only 2 types OR it is not arabic (start of the word)
       if (!is_ar(str[i + 1])) { // If not arabic (end of the word)
-        str[i] = get_reshaped_unshaped_glphy(str[i], 1, unshape);
+        str[i] = get_reshaped_glphy(str[i], 1);
       } else {
         // If the letter has only 2 shapes, then it doesnt matter which position it is, It'll be always the second form
-        str[i] = get_reshaped_unshaped_glphy(str[i], 2, unshape);
+        str[i] = get_reshaped_glphy(str[i], 2);
       }
     } else if (!is_ar(str[i + 1])) { // If not arabic (end of the word)
       // Put the right form of the character, 4 for the last letter in the str
-      str[i] = get_reshaped_unshaped_glphy(str[i], 4, unshape);
+      str[i] = get_reshaped_glphy(str[i], 4);
     } else {
       // Then it should be in the middle which should be placed in its right form 3
-      str[i] = get_reshaped_unshaped_glphy(str[i], 3, unshape);
+      str[i] = get_reshaped_glphy(str[i], 3);
     }
     prev = tmp;
   }
 
   // check for the last letter before last has 2 forms
   if (len >= 2) {
+    if (unshape) {
+      str[i] = get_unshaped_glphy(str[i]);
+    }
     if(get_glphy_type(prev) == 2) {
       // If the letter has only 2 shapes, then it doesnt matter which position it is, It'll be always the second form
-      str[i] = get_reshaped_unshaped_glphy(str[len - 1], 1, unshape);
+      str[i] = get_reshaped_glphy(str[len - 1], 1);
     } else {
       // Put the right form of the character, 4 for the last letter in the str
-      str[i] = get_reshaped_unshaped_glphy(str[len - 1], 4, unshape);
+      str[i] = get_reshaped_glphy(str[len - 1], 4);
     }
   }
 

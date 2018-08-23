@@ -27,8 +27,6 @@ wchar_t get_unshaped_glphy(wchar_t target);
 
 wchar_t get_reshaped_glphy(wchar_t target, int location);
 
-wchar_t get_reshaped_unshaped_glphy(wchar_t target, int location, bool unshape);
-
 int get_glphy_type(wchar_t target);
 
 wchar_t* reshape(wchar_t* str, size_t len, bool unshape);
