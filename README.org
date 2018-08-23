@@ -6,10 +6,32 @@ $ make
 $ sudo make install
 #+END_SRC
 ** Future improvements
-- No support for la (لا)
-- No support for harakat (tashkeel)
+- Support for la (لا)
+- Support for harakat (tashkeel)
 ** Similar projects
+This project was inspired by these projects
 - [[https://github.com/agawish/Better-Arabic-Reshaper][Better Arabic Reshaper (Java)]]
 - [[https://github.com/mpcabd/python-arabic-reshaper][python-arabic-reshaper]]
+** But why?
+#+BEGIN_SRC sh
+naheel@naheel-z41 ~/P/c/benchmark> ls -lh ../test-data-1.txt
+-rw-rw-r--. 1 naheel naheel 769K Aug 23 01:09 ../test-data-1.txt
+naheel@naheel-z41 ~/P/c/benchmark>
+time -p sh -c 'cat ../test-data-1.txt | python3 py-ar-reshaper.py > test-data-1-py.txt'
+real 20.64
+user 20.53
+sys 0.03
+naheel@naheel-z41 ~/P/c/benchmark>
+time -p sh -c 'cat ../test-data-1.txt | java ArabicReshaper > test-data-1-java.txt'
+real 1.21
+user 1.57
+sys 0.38
+naheel@naheel-z41 ~/P/c/benchmark>
+time -p sh -c 'cat ../test-data-1.txt | arabic-reshape > test-data-1-c.txt'
+real 0.20
+user 0.04
+sys 0.15
+naheel@naheel-z41 ~/P/c/benchmark>
+#+END_SRC
 ** License
 GPL-3
